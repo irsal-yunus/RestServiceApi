@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+  <springProfile name="default">
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+    <!--Define the storage address of the log file Do not use the relative path in the configuration of LogBack -->
+  <property name="LOG_HOME" value="e:/log" /> 
+         <!-- Console output -->
+    <springProfile name="prod">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                         <!--Formatted output: %d means date, %thread means thread name, %-5level: level shows 5 characters width from the left %msg: log message, %n is a newline -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+         <!-- Generate log files every day -->
+    <appender name="FILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                         <!--File name of log file output -->
+            <FileNamePattern>${LOG_HOME}/TestWeb.log.%d{yyyy-MM-dd-HH-mm}.log</FileNamePattern>
+                         <!--Log file retention days -->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                         <!--Formatted output: %d means date, %thread means thread name, %-5level: level shows 5 characters width from the left %msg: log message, %n is a newline -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+                 <!--The maximum size of the log file -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+     <!-- info -->
+     <!-- Info -->
+    <appender name="info1" class="ch.qos.logback.core.rolling.RollingFileAppender">
+       <!--  <appender>true</appender> -->
+ 
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter> 
+                 <!-- Generate log files every day -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/info.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+                         <!-- The log file is kept for 15 days -->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+                 <!-- Formatted output -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} | %thread | %-5level | %class{20}:%file\(%line\) | %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--debug  -->
+    <appender name="debug1" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <!-- <appender>true</appender> -->
+ 
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+           <!--  <onMatch>ACCEPT</onMatch> 
+			<onMismatch>DENY</onMismatch>  -->
+        </filter> 
+                 <!-- Generate log files every day -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/debug.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+                         <!-- The log file is kept for 15 days -->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+                 <!-- Formatted output -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} | %thread | %-5level | %class{20}:%file\(%line\) | %msg%n</pattern>
+        </encoder>
+    </appender>
+ <!--    <appender name="info_async" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>3000</discardingThreshold>
+        <queueSize>10000</queueSize>
+        <appender-ref ref="info" />
+    </appender> -->
+ 
+         <!-- show parameters for hibernate sql customized for Hibernate -->
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder"  level="TRACE" />
+    <logger name="org.hibernate.type.descriptor.sql.BasicExtractor"  level="DEBUG" />
+    <logger name="org.hibernate.SQL" level="DEBUG" />
+    <logger name="org.hibernate.engine.QueryParameters" level="DEBUG" />
+    <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG" />
+ 
+    <!--myibatis log configure-->
+    <logger name="com.apache.ibatis" level="TRACE"/>
+    <logger name="java.sql.Connection" level="DEBUG"/>
+    <logger name="java.sql.Statement" level="DEBUG"/>
+    <logger name="java.sql.PreparedStatement" level="DEBUG"/>
+ 
+         <!-- Log output level -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="info1" />
+        <appender-ref ref="debug1" />
+    </root>
+         <!--Log asynchronous to database -->
+    <!--<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">-->
+                 <!--&lt;!&ndash; logs asynchronous to the database &ndash;&gt;-->
+        <!--<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">-->
+                         <!--&lt;!&ndash;connection pool &ndash;&gt;-->
+            <!--<dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
+                <!--<driverClass>com.mysql.jdbc.Driver</driverClass>-->
+                <!--<url>jdbc:mysql://127.0.0.1:3306/databaseName</url>-->
+                <!--<user>root</user>-->
+                <!--<password>root</password>-->
+            <!--</dataSource>-->
+        <!--</connectionSource>-->
+    <!--</appender>-->
+    </springProfile>
+</configuration>
